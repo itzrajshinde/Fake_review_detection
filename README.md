@@ -33,4 +33,10 @@ The model was trained on a labeled dataset of user comments. The comments were v
 ---
 
 ## 📁 Project Structure
-
+fake-comment-detector/
+│
+├── app.py # Main Flask application
+├── vectorizer.pkl # Trained TF-IDF vectorizer
+├── fake_comment_detector.pkl # Trained ML classifier
+├── templates/
+│ └── index.html # Frontend for user input
