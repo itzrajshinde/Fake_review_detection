@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReviewTruth - Comment Analyzer</title>
+
+    <!-- Google Fonts (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS Connection using Flask's url_for -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+<!-- Apply theme class based on JS later, check for model status -->
+<!-- Add model-load-failed class server-side if needed for initial styling -->
+<body class="dark-mode {% if not model_loaded %}model-load-failed{% endif %}">
+
+    <div class="background-overlay"></div>
+
+    <header class="hero-section">
+        <div class="container hero-container">
+            <h1 class="app-name">Fake Review Detection</h1>
+            <h2 class="tagline">Reveal the truth behind every comment.</h2>
+            <p class="subtext">Paste a review or comment and instantly know if it’s likely real or fake.</p>
+            <!-- Theme Toggle Button (Optional - Add back if desired) -->
+            <!--
+            <button id="theme-toggle" class="theme-toggle-button" aria-label="Toggle theme">
+                <span class="icon sun-icon">☀️</span>
+                <span class="icon moon-icon">🌙</span>
+            </button>
+            -->
+        </div>
+    </header>
+
+    <main class="container content-area">
+        <!-- Input Section -->
+        <section class="card input-section glass-card">
+             <form id="comment-analyzer-form" aria-label="Analyze comment text">
+                 <div class="form-group">
+                     <label for="comment-text-input">Paste Comment or Review</label>
+                     <!-- Textarea - Disabled state handled by JS based on model_loaded -->
+                     <textarea id="comment-text-input" name="text" rows="6" required placeholder="Enter comment text here..."></textarea>
+                 </div>
+                 <!-- Message shown if model isn't loaded (styled via CSS using body class) -->
+                 {% if not model_loaded %}
+                    <p class="error-message model-load-error">
+                        Analysis Unavailable: The prediction model failed to load. Please check server logs.
+                    </p>
+                 {% endif %}
+                 <!-- Button - Disabled state handled by JS based on model_loaded -->
+                 <button type="submit" id="analyze-button" class="analyze-button">
+                    Analyze Authenticity
+                 </button>
+             </form>
+             <!-- Loading Indicator -->
+             <div id="loading-indicator" class="loading-indicator" style="display: none;" role="status" aria-live="polite">
+                <div class="spinner"></div> Analyzing...
+            </div>
+             <!-- Error Message Area -->
+            <div id="error-message" class="error-message" style="display: none;" role="alert"></div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="result-section" class="card result-section glass-card" style="display: none;" aria-live="polite">
+             <h3 id="result-verdict" class="result-verdict">
+                 <!-- Verdict dynamically added -->
+             </h3>
+             <div class="result-details">
+                 <div class="detail-item sentiment-item">
+                     <span class="label">Sentiment</span>
+                     <span id="result-sentiment" class="value">
+                         <!-- Sentiment dynamically added -->
+                     </span>
+                 </div>
+                 <div class="detail-item confidence-item">
+                     <span class="label">Confidence</span>
+                     <span id="result-confidence" class="value">
+                         <!-- Confidence % dynamically added -->
+                     </span>
+                     <div class="confidence-bar" aria-hidden="true">
+                         <div id="confidence-bar-inner" class="confidence-bar-inner" style="width: 0%;"></div>
+                     </div>
+                 </div>
+             </div>
+        </section>
+    </main>
+
+    <footer class="footer-section">
+        <div class="container">
+            <p>Built using AI & Text Analysis. For demonstration purposes only.</p>
+            <!-- Theme Toggle Button can also go here -->
+             <button id="theme-toggle" class="theme-toggle-button" aria-label="Toggle theme">
+                 <span class="icon sun-icon">☀️</span>
+                 <span class="icon moon-icon">🌙</span>
+             </button>
+        </div>
+    </footer>
+
+    <!-- Pass model loaded status from Flask to JavaScript -->
+    <!-- IMPORTANT: Place this *before* loading script.js -->
+    <script>
+      // Use Flask's 'tojson' filter for safe boolean passing
+      window.MODEL_LOADED = {{ model_loaded | tojson }};
+    </script>
+
+    <!-- JavaScript Connection using Flask's url_for -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>
